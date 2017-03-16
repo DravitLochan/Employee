@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import ims.com.employee.Helpers.InternetCheck;
 import ims.com.employee.Models.User;
 import ims.com.employee.prefs.UserCreds;
 
@@ -51,32 +52,41 @@ public class Signup extends AppCompatActivity {
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog.setMessage("Please Wait. Verifying...");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-                if(checkFeilds())
+                if (InternetCheck.internetCheck(context))
                 {
-                    auth.createUserWithEmailAndPassword(signup_email.getText().toString(),conf_password.getText().toString())
-                            .addOnCompleteListener(Signup.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (!task.isSuccessful()) {
-                                        progressDialog.dismiss();
-                                        Toast.makeText(Signup.this, "Signup failed. already registered?" ,//here add the prompt
-                                                Toast.LENGTH_LONG).show();
-                                    } else {
-                                        User u = new User(signup_email.getText().toString(),conf_password.getText().toString());
-                                        UserCreds userCreds = new UserCreds(context);
-                                        userCreds.setIsUserSet(true);
-                                        userCreds.setUser(u);
-                                        mDatabaseReference.push().setValue(u);
-                                        progressDialog.dismiss();
-                                        Toast.makeText(context,"Welcome!",Toast.LENGTH_LONG).show();
-                                        startActivity(new Intent(Signup.this, MainActivity.class));
-                                        finish();
+                    progressDialog.setMessage("Please Wait. Verifying...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                    if(checkFeilds())
+                    {
+                        auth.createUserWithEmailAndPassword(signup_email.getText().toString(),conf_password.getText().toString())
+                                .addOnCompleteListener(Signup.this, new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        if (!task.isSuccessful()) {
+                                            progressDialog.dismiss();
+                                            Toast.makeText(Signup.this, "Signup failed. already registered?" ,//here add the prompt
+                                                    Toast.LENGTH_LONG).show();
+                                        } else {
+                                            User u = new User(signup_email.getText().toString(),conf_password.getText().toString());
+                                            UserCreds userCreds = new UserCreds(context);
+                                            userCreds.setIsUserSet(true);
+                                            userCreds.setUser(u);
+                                            mDatabaseReference.push().setValue(u);
+                                            progressDialog.dismiss();
+                                            Toast.makeText(context,"Welcome!",Toast.LENGTH_LONG).show();
+                                            startActivity(new Intent(Signup.this, MainActivity.class));
+                                            finish();
+                                        }
                                     }
-                                }
-                            });
+                                });
+                    }
+                    else
+                        progressDialog.dismiss();
+                }
+                else
+                {
+                    Toast.makeText(context,"No Internet Connection!",Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import ims.com.employee.Helpers.InternetCheck;
 import ims.com.employee.Models.User;
 import ims.com.employee.prefs.UserCreds;
 
@@ -46,37 +47,46 @@ public class Login extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                progressDialog.setMessage("checking your details...");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-                if(checkFeilds())
+                if(InternetCheck.internetCheck(context))
                 {
-                    progressDialog.setMessage("signing you in...");
-                    auth.signInWithEmailAndPassword(login_email.getText().toString(),login_password.getText().toString())
-                            .addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    // If sign in fails, display a message to the user. If sign in succeeds
-                                    // the auth state listener will be notified and logic to handle the
-                                    // signed in user can be handled in the listener.
-                                    if (!task.isSuccessful()) {
-                                        // there was an error
-                                        progressDialog.dismiss();
+                    progressDialog.setMessage("checking your details...");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                    if(checkFeilds())
+                    {
+                        progressDialog.setMessage("signing you in...");
+                        auth.signInWithEmailAndPassword(login_email.getText().toString(),login_password.getText().toString())
+                                .addOnCompleteListener(Login.this, new OnCompleteListener<AuthResult>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                        // If sign in fails, display a message to the user. If sign in succeeds
+                                        // the auth state listener will be notified and logic to handle the
+                                        // signed in user can be handled in the listener.
+                                        if (!task.isSuccessful()) {
+                                            // there was an error
+                                            progressDialog.dismiss();
 //                                        giveSignUpPrompt();
+                                        }
+                                        else {
+                                            User user = new User(login_email.getText().toString(),login_password.getText().toString());
+                                            UserCreds userCreds = new UserCreds(context);
+                                            userCreds.setIsUserSet(true);
+                                            userCreds.setUser(user);
+                                            progressDialog.dismiss();
+                                            Toast.makeText(context,"welcome back!",Toast.LENGTH_LONG).show();
+                                            Intent intent = new Intent(Login.this,MainActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        }
                                     }
-                                    else {
-                                        User user = new User(login_email.getText().toString(),login_password.getText().toString());
-                                        UserCreds userCreds = new UserCreds(context);
-                                        userCreds.setIsUserSet(true);
-                                        userCreds.setUser(user);
-                                        progressDialog.dismiss();
-                                        Toast.makeText(context,"welcome back!",Toast.LENGTH_LONG).show();
-                                        Intent intent = new Intent(Login.this,MainActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                }
-                            });
+                                });
+                    }
+                    else
+                        progressDialog.dismiss();
+                }
+                else
+                {
+                    Toast.makeText(context,"No Internet Connection!",Toast.LENGTH_SHORT).show();
                 }
             }
         });
