@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,7 +25,7 @@ import ims.com.employee.prefs.UserCreds;
 public class Signup extends AppCompatActivity {
 
     EditText signup_email,signup_password,conf_password;
-    Button signup;
+    Button signup,open_login;
     private Context context;
     private ProgressDialog progressDialog;
 
@@ -41,6 +42,7 @@ public class Signup extends AppCompatActivity {
         conf_password = (EditText) findViewById(R.id.conf_password);
         signup = (Button) findViewById(R.id.signup);
         progressDialog = new ProgressDialog(context);
+        open_login = (Button) findViewById(R.id.open_login);
 
         mFirebaseDatabase=FirebaseDatabase.getInstance();
         auth=FirebaseAuth.getInstance();
@@ -50,6 +52,8 @@ public class Signup extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 progressDialog.setMessage("Please Wait. Verifying...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
                 if(checkFeilds())
                 {
                     auth.createUserWithEmailAndPassword(signup_email.getText().toString(),conf_password.getText().toString())
@@ -76,9 +80,16 @@ public class Signup extends AppCompatActivity {
                 }
             }
         });
+
+        open_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Signup.this, Login.class));
+            }
+        });
     }
 
-    private boolean checkFeilds() {
+    public boolean checkFeilds() {
         signup_email = (EditText) findViewById(R.id.signup_email);
         signup_password = (EditText) findViewById(R.id.signup_password);
         conf_password = (EditText) findViewById(R.id.conf_password);

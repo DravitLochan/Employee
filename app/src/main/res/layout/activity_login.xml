@@ -30,14 +30,14 @@
             android:textSize="30dp" />
 
         <EditText
-            android:id="@+id/signup_email"
+            android:id="@+id/login_email"
             android:hint="email"
             android:inputType="textPersonName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dip"/>
         <EditText
-            android:id="@+id/signup_password"
+            android:id="@+id/login_password"
             android:hint="Password"
             android:inputType="textPassword"
             android:layout_width="match_parent"

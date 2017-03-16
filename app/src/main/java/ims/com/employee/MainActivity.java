@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
         if(!userCreds.getIsUserSet())
         {
             startActivity(new Intent(MainActivity.this,Login.class));
+            finish();
         }
         else
         {
