@@ -1,11 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:scrollIndicators="right"
     tools:context="ims.com.employee.MainActivity">
 
+    <View
+        android:id="@+id/vertical_divider"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true" />
 
+    <View
+        android:id="@+id/horizontal_divider"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_centerVertical="true" />
 
-</android.support.constraint.ConstraintLayout>
+    <Button
+        android:id="@+id/button_sales_sheet"
+        android:text="sales sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/horizontal_divider"
+        android:layout_toLeftOf="@id/vertical_divider"
+        android:background="@color/b1"/>
+
+    <Button
+        android:id="@+id/button_check_in"
+        android:text="check-in"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/horizontal_divider"
+        android:layout_toRightOf="@id/vertical_divider"
+        android:background="@color/b2"/>
+
+    <Button
+        android:id="@+id/button_check_out"
+        android:text="check-out"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/horizontal_divider"
+        android:layout_toLeftOf="@id/vertical_divider"
+        android:background="@color/b3"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/horizontal_divider"
+        android:layout_toRightOf="@id/vertical_divider"
+        android:background="@color/b4"/>
+
+</RelativeLayout>
