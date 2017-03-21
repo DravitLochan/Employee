@@ -47,6 +47,8 @@
         android:background="@color/b3"/>
 
     <Button
+        android:id="@+id/update_me"
+        android:text="update"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/horizontal_divider"
