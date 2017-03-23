@@ -14,17 +14,22 @@ import android.widget.Toast;
 import java.util.Calendar;
 
 import ims.com.employee.prefs.UserCreds;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 public class MainActivity extends AppCompatActivity {
 
     Context context;
     UserCreds userCreds;
-    int hours,min;
+    private Realm realm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        // Create a RealmConfiguration which is to locate Realm file in package's "files" directory.
+        RealmConfiguration realmConfig = new RealmConfiguration.Builder(context).build();
+        // Get a Realm instance for this thread
+        Realm realm = Realm.getInstance(realmConfig);
         final AlertDialog.Builder altr=new AlertDialog.Builder(MainActivity.this);
 
         context=this;
