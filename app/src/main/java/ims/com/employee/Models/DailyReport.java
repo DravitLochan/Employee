@@ -11,7 +11,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by DravitLochan on 22-03-2017.
  */
 
-public class DailyReport extends RealmObject{
+public class DailyReport{
 
     @PrimaryKey
     private int id;
