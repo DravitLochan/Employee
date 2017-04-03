@@ -12,25 +12,28 @@ public class DailyRec {
     SharedPreferences.Editor editor;
     Context context;
 
-    int PRIVATE_MODE=0;
-    private static final String PREF_NAME="employee";
+    int PRIVATE_MODE = 0;
+    private static final String PREF_NAME = "employee";
     private static final String IS_CHECKED_IN = "IsChecked";
+    private static final String TODAY_CHECKED_FLAG = "TodayCheckedFlag";
 
-    public DailyRec(Context context)
-    {
+    public DailyRec(Context context) {
         this.context = context;
         prefs = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         editor = prefs.edit();
     }
 
-    public void setIsCheckedIn(boolean isCheckedIn)
-    {
+    public void setIsCheckedIn(boolean isCheckedIn) {
         editor.putBoolean(IS_CHECKED_IN, isCheckedIn);
         editor.commit();
     }
 
-    public boolean getIsCheckedIn()
-    {
+    public boolean getIsCheckedIn() {
         return prefs.getBoolean(IS_CHECKED_IN, false);
     }
+
+    public boolean getTodayCheckedFlag() {
+        return prefs.getBoolean(TODAY_CHECKED_FLAG, false);
+    }
+
 }

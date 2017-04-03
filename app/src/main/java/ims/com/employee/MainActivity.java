@@ -9,23 +9,20 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.FloatRange;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
+import android.Manifest;
+
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -37,17 +34,21 @@ public class MainActivity extends AppCompatActivity {
 
     Context context;
     UserCreds userCreds;
-    int hours, min;
     Geocoder geocoder;
     LocationManager locationManager;
     LocationListener locationListener;
     Button check_in, check_out, update_me, sales_sheet;
     Location devLocation;
+    private static int permReqCode = 111;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},permReqCode);
+        }
         sales_sheet = (Button) findViewById(R.id.button_sales_sheet);
         update_me = (Button) findViewById(R.id.update_me);
         check_in = (Button) findViewById(R.id.button_check_in);
@@ -85,7 +86,18 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-
+                Toast.makeText(context,"switch on the location", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("GPS not enabled");
+                builder.setMessage("open and enable location via gps");
+                builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                });
+                builder.setNegativeButton("no", null);
+                builder.create().show();
+                return;
             }
 
             @Override
@@ -95,7 +107,15 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onProviderDisabled(String provider) {
-
+                Toast.makeText(context,"switch on the location", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("GPS not found");
+                builder.setMessage("Want to enable?");
+                builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                });
             }
         };
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -122,13 +142,16 @@ public class MainActivity extends AppCompatActivity {
                     Date d = new Date(longD);
                     SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
                     String sDate = sdf.format(d);
-                    if(!(d.getHours()>10&&d.getHours()<16))
+                    if(!(d.getHours()>=10&&d.getHours()<=19))
                         Toast.makeText(context,"Office hours starts @10!",Toast.LENGTH_SHORT).show();
                     else
                     {
                         DailyRec dailyRec = new DailyRec(context);
                         if(dailyRec.getIsCheckedIn()==false)
+                        {
+                            dailyRec.setIsCheckedIn(true);
                             Toast.makeText(context,"noted!",Toast.LENGTH_SHORT).show();
+                        }
                         else
                             Toast.makeText(context,"already checked in!",Toast.LENGTH_SHORT).show();
                     }
@@ -144,14 +167,14 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    DailyRec dailyRec= new DailyRec(context);
+                    final DailyRec dailyRec= new DailyRec(context);
                     if(dailyRec.getIsCheckedIn()==true)
                     {
                         long longD = devLocation.getTime();
                         Date d = new Date(longD);
                         SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
                         String sDate = sdf.format(d);
-                        if((d.getHours()>10&&d.getHours()<16))
+                        if((d.getHours()>=10&&d.getHours()<16))
                         {
                             AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
 
@@ -164,7 +187,9 @@ public class MainActivity extends AppCompatActivity {
                             // Setting Positive "Yes" Button
                             alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog,int which) {
+                                    dailyRec.setIsCheckedIn(false);
                                     Toast.makeText(getApplicationContext(), "Checked out!", Toast.LENGTH_SHORT).show();
+                                    getExp(context);
                                 }
                             });
 
@@ -206,12 +231,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+/*
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
     {
-        Toast.makeText(context,"allow location access to the app!",Toast.LENGTH_SHORT).show();
-    }
+        //Toast.makeText(context,"allow location access to the app!",Toast.LENGTH_SHORT).show();
+    }*/
 
     public void getExp(final Context context)
     {
@@ -227,7 +252,17 @@ public class MainActivity extends AppCompatActivity {
                                 EditText exp = (EditText) promptsView.findViewById(R.id.exp);
                                 DailyRec dailyRec = new DailyRec(context);
                                 dailyRec.setIsCheckedIn(false);
-                                Float.parseFloat(exp.getText().toString());
+                                if(!(exp.getText().toString().equals("")||exp.getText().toString().contains(" ")))
+                                {
+                                    Float.parseFloat(exp.getText().toString());
+                                    //ToDo: send this value to database
+                                    Toast.makeText(context,"Hope you had a nice day!",Toast.LENGTH_SHORT).show();
+                                }
+                                else
+                                {
+                                    Toast.makeText(context,"enter a valid amount!",Toast.LENGTH_SHORT).show();
+                                    getExp(context);
+                                }
                             }
                         });
 
