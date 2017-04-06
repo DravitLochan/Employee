@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     }
                 });
-                builder.setNegativeButton("no", null);
+                builder.setCancelable(false);
                 builder.create().show();
                 return;
             }
@@ -107,15 +107,18 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onProviderDisabled(String provider) {
-                Toast.makeText(context,"switch on the location", Toast.LENGTH_SHORT).show();
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("GPS not found");
-                builder.setMessage("Want to enable?");
+                Toast.makeText(context,"switch on the location", Toast.LENGTH_SHORT).show();
+                builder.setMessage("open and enable location via gps");
                 builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     }
                 });
+                builder.setCancelable(false);
+                builder.create().show();
+                return;
             }
         };
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -142,18 +145,27 @@ public class MainActivity extends AppCompatActivity {
                     Date d = new Date(longD);
                     SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
                     String sDate = sdf.format(d);
-                    if(!(d.getHours()>=10&&d.getHours()<=19))
-                        Toast.makeText(context,"Office hours starts @10!",Toast.LENGTH_SHORT).show();
+                    DailyRec dailyRec = new DailyRec(context);
+                    if(dailyRec.getDate()!=d.getDate())
+                    {
+                        if(!(d.getHours()>=10&&d.getHours()<=19))
+                            Toast.makeText(context,"Office hours starts @10!",Toast.LENGTH_SHORT).show();
+                        else
+                        {
+                            dailyRec = new DailyRec(context);
+                            if(dailyRec.getIsCheckedIn()==false)
+                            {
+                                dailyRec.setIsCheckedIn(true);
+                                dailyRec.setDate(d.getDate());
+                                Toast.makeText(context,"noted!",Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                                Toast.makeText(context,"already checked in!",Toast.LENGTH_SHORT).show();
+                        }
+                    }
                     else
                     {
-                        DailyRec dailyRec = new DailyRec(context);
-                        if(dailyRec.getIsCheckedIn()==false)
-                        {
-                            dailyRec.setIsCheckedIn(true);
-                            Toast.makeText(context,"noted!",Toast.LENGTH_SHORT).show();
-                        }
-                        else
-                            Toast.makeText(context,"already checked in!",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context,"you can check-in only once per day!",Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -167,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else
                 {
+                    //here there maybe a bug because it is declared final
                     final DailyRec dailyRec= new DailyRec(context);
                     if(dailyRec.getIsCheckedIn()==true)
                     {

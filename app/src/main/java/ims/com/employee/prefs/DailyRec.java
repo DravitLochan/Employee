@@ -15,7 +15,7 @@ public class DailyRec {
     int PRIVATE_MODE = 0;
     private static final String PREF_NAME = "employee";
     private static final String IS_CHECKED_IN = "IsChecked";
-    private static final String TODAY_CHECKED_FLAG = "TodayCheckedFlag";
+    private static final String DATE = "date";
 
     public DailyRec(Context context) {
         this.context = context;
@@ -32,8 +32,13 @@ public class DailyRec {
         return prefs.getBoolean(IS_CHECKED_IN, false);
     }
 
-    public boolean getTodayCheckedFlag() {
-        return prefs.getBoolean(TODAY_CHECKED_FLAG, false);
+    public int getDate() {
+        return prefs.getInt(DATE, 1);
     }
 
+    public void setDate(int date)
+    {
+        editor.putInt(DATE, date);
+        editor.commit();
+    }
 }
