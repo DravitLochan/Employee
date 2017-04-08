@@ -14,9 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
+        android:layout_centerVertical="true">
 
         <TextView
             android:id="@+id/textView1"
@@ -29,6 +27,13 @@
             android:textColor="#fff"
             android:textSize="30dp" />
 
+        <EditText
+            android:id="@+id/login_user_name"
+            android:hint="username"
+            android:inputType="textPersonName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dip"/>
         <EditText
             android:id="@+id/login_email"
             android:hint="email"

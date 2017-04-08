@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         userCreds = new UserCreds(context);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child(userCreds.getUser().getEmail()+"");
+        databaseReference = firebaseDatabase.getReference().child(userCreds.getUser().getUser_name()+"");
 
         if (!userCreds.getIsUserSet()) {
             startActivity(new Intent(MainActivity.this, Login.class));

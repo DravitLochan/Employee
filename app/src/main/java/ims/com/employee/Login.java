@@ -25,7 +25,7 @@ import ims.com.employee.prefs.UserCreds;
 public class Login extends AppCompatActivity {
 
     Button register, login;
-    EditText login_email, login_password;
+    EditText login_email, login_password, login_user_name;
     Context context;
     ProgressDialog progressDialog;
     private FirebaseDatabase mFirebaseDatabase;
@@ -42,6 +42,7 @@ public class Login extends AppCompatActivity {
         login = (Button) findViewById(R.id.login);
         register = (Button) findViewById(R.id.open_signup);
         login_email = (EditText) findViewById(R.id.login_email);
+        login_user_name = (EditText) findViewById(R.id.login_user_name);
         login_password = (EditText) findViewById(R.id.login_password);
 
         login.setOnClickListener(new View.OnClickListener() {
@@ -64,11 +65,12 @@ public class Login extends AppCompatActivity {
                                         // signed in user can be handled in the listener.
                                         if (!task.isSuccessful()) {
                                             // there was an error
+                                            Toast.makeText(context,"have you signed up before?",Toast.LENGTH_SHORT).show();
                                             progressDialog.dismiss();
 //                                        giveSignUpPrompt();
                                         }
                                         else {
-                                            User user = new User(login_email.getText().toString(),login_password.getText().toString());
+                                            User user = new User(login_user_name.getText().toString(),login_email.getText().toString(),login_password.getText().toString());
                                             UserCreds userCreds = new UserCreds(context);
                                             userCreds.setIsUserSet(true);
                                             userCreds.setUser(user);

@@ -30,7 +30,7 @@
             android:textSize="30dp" />
 
         <EditText
-            android:id="@+id/user_name"
+            android:id="@+id/signup_user_name"
             android:hint="user name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

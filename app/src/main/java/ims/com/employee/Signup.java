@@ -25,7 +25,7 @@ import ims.com.employee.prefs.UserCreds;
 
 public class Signup extends AppCompatActivity {
 
-    EditText user_name,signup_email,signup_password,conf_password;
+    EditText signup_user_name,signup_email,signup_password,conf_password;
     Button signup,open_login;
     private Context context;
     private ProgressDialog progressDialog;
@@ -38,7 +38,7 @@ public class Signup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         context = this;
-        user_name = (EditText) findViewById(R.id.user_name);
+        signup_user_name = (EditText) findViewById(R.id.signup_user_name);
         signup_email = (EditText) findViewById(R.id.signup_email);
         signup_password = (EditText) findViewById(R.id.signup_password);
         conf_password = (EditText) findViewById(R.id.conf_password);
@@ -69,11 +69,13 @@ public class Signup extends AppCompatActivity {
                                             Toast.makeText(Signup.this, "Signup failed. already registered?" ,//here add the prompt
                                                     Toast.LENGTH_LONG).show();
                                         } else {
-                                            User u = new User(user_name.getText().toString(),signup_email.getText().toString(),conf_password.getText().toString());
+                                            User u = new User(signup_user_name.getText().toString(),signup_email.getText().toString(),conf_password.getText().toString());
                                             UserCreds userCreds = new UserCreds(context);
                                             userCreds.setIsUserSet(true);
                                             userCreds.setUser(u);
                                             mDatabaseReference.push().setValue(u);
+                                            DatabaseReference userDBRference = mFirebaseDatabase.getReference().child(signup_user_name.getText().toString()+"");
+                                            userDBRference.push().setValue(u);
                                             progressDialog.dismiss();
                                             Toast.makeText(context,"Welcome!",Toast.LENGTH_LONG).show();
                                             startActivity(new Intent(Signup.this, MainActivity.class));
@@ -96,6 +98,7 @@ public class Signup extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(Signup.this, Login.class));
+                finish();
             }
         });
     }

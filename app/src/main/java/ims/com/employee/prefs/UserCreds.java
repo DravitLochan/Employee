@@ -17,6 +17,7 @@ public class UserCreds {
     int PRIVATE_MODE=0;
     private static final String PREF_NAME="employee";
     private static final String EMAIL="email";
+    private static final String USER_NAME = "UserName";
     private static final String PASSWORD="password";
     private static final String IS_USER_SET="IsUserSet";
 
@@ -31,12 +32,13 @@ public class UserCreds {
     {
         editor.putString(EMAIL,user.getEmail());
         editor.putString(PASSWORD,user.getPassword());
+        editor.putString(USER_NAME,user.getUser_name());
         editor.commit();
     }
 
     public User getUser()
     {
-        User user = new User(sharedPreferences.getString(EMAIL,null),sharedPreferences.getString(PASSWORD,null));
+        User user = new User(sharedPreferences.getString(USER_NAME,null),sharedPreferences.getString(EMAIL,null),sharedPreferences.getString(PASSWORD,null));
         return user;
     }
 
