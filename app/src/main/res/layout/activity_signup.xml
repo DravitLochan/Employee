@@ -28,6 +28,13 @@
             android:text="Signup"
             android:textColor="#fff"
             android:textSize="30dp" />
+
+        <EditText
+            android:id="@+id/user_name"
+            android:hint="user name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dip"/>
         <EditText
             android:id="@+id/signup_email"
             android:hint="email"

@@ -21,12 +21,17 @@ import android.widget.Toast;
 import android.Manifest;
 
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import ims.com.employee.Helpers.InternetCheck;
+import ims.com.employee.Models.LocationDets;
 import ims.com.employee.prefs.DailyRec;
 import ims.com.employee.prefs.UserCreds;
 
@@ -41,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     Location devLocation;
     private static int permReqCode = 111;
 
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +63,9 @@ public class MainActivity extends AppCompatActivity {
         geocoder = new Geocoder(this, Locale.getDefault());
         context = this;
         userCreds = new UserCreds(context);
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference().child(userCreds.getUser().getEmail()+"");
 
         if (!userCreds.getIsUserSet()) {
             startActivity(new Intent(MainActivity.this, Login.class));
@@ -75,12 +85,6 @@ public class MainActivity extends AppCompatActivity {
                 */
                 devLocation = location;
 
-                try {
-                    List<Address> add = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                    //details.setText(add.get(0).getLocality()+"\n"+add.get(0).getAddressLine(0)+"\n"+add.get(0).getFeatureName()+"\n"+"\n"+add.get(0).getSubLocality());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
                 //Toast.makeText(getApplicationContext(), "test123", Toast.LENGTH_SHORT).show();
             }
 
@@ -152,11 +156,12 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(context,"Office hours starts @10!",Toast.LENGTH_SHORT).show();
                         else
                         {
-                            dailyRec = new DailyRec(context);
+                            //dailyRec = new DailyRec(context);
                             if(dailyRec.getIsCheckedIn()==false)
                             {
                                 dailyRec.setIsCheckedIn(true);
                                 dailyRec.setDate(d.getDate());
+                                //ToDo: send this value to database so that if anyone clears the prefs, it still wont fuck up.
                                 Toast.makeText(context,"noted!",Toast.LENGTH_SHORT).show();
                             }
                             else
@@ -180,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 else
                 {
                     //here there maybe a bug because it is declared final
-                    final DailyRec dailyRec= new DailyRec(context);
+                    DailyRec dailyRec= new DailyRec(context);
                     if(dailyRec.getIsCheckedIn()==true)
                     {
                         long longD = devLocation.getTime();
@@ -200,7 +205,8 @@ public class MainActivity extends AppCompatActivity {
                             // Setting Positive "Yes" Button
                             alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog,int which) {
-                                    dailyRec.setIsCheckedIn(false);
+                                    DailyRec dailyRecSetCheckedIn = new DailyRec(context);
+                                    dailyRecSetCheckedIn.setIsCheckedIn(false);
                                     Toast.makeText(getApplicationContext(), "Checked out!", Toast.LENGTH_SHORT).show();
                                     getExp(context);
                                 }
@@ -234,7 +240,31 @@ public class MainActivity extends AppCompatActivity {
         update_me.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context,"coming soon..!!",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context,"coming soon..!!",Toast.LENGTH_SHORT).show();
+                DailyRec dailyRec = new DailyRec(context);
+                if(dailyRec.getIsCheckedIn()==true)
+                {
+                    try {
+                        //details.setText(add.get(0).getLocality()+"\n"+add.get(0).getAddressLine(0)+"\n"+add.get(0).getFeatureName()+"\n"+"\n"+add.get(0).getSubLocality());
+                        if(InternetCheck.internetCheck(context)==true)
+                        {
+                            List<Address> add = geocoder.getFromLocation(devLocation.getLatitude(), devLocation.getLongitude(), 1);
+                            LocationDets locationDets = new LocationDets("name",add.get(0).getAddressLine(0),dailyRec.getDate()+"",devLocation.getTime()+"");
+                            databaseReference.push().setValue(locationDets);
+                        }
+                        else
+                        {
+                            Toast.makeText(context,"No Internet Access!",Toast.LENGTH_SHORT).show();
+                        }
+                    } catch (IOException e) {
+                        Toast.makeText(context,"Some error occured. Please restart the application",Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(context,"you need to check-in first!",Toast.LENGTH_SHORT).show();
+                }
             }
         });
         sales_sheet.setOnClickListener(new View.OnClickListener() {

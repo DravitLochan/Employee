@@ -17,6 +17,11 @@ public class DailyRec {
     private static final String IS_CHECKED_IN = "IsChecked";
     private static final String DATE = "date";
 
+    public DailyRec()
+    {
+
+    }
+
     public DailyRec(Context context) {
         this.context = context;
         prefs = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
@@ -36,8 +41,7 @@ public class DailyRec {
         return prefs.getInt(DATE, 1);
     }
 
-    public void setDate(int date)
-    {
+    public void setDate(int date) {
         editor.putInt(DATE, date);
         editor.commit();
     }
