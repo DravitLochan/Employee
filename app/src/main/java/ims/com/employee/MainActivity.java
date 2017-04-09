@@ -47,9 +47,10 @@ public class MainActivity extends AppCompatActivity {
     Button check_in, check_out, update_me, sales_sheet;
     Location devLocation;
     private static int permReqCode = 111;
-
+    String nameOfLocation;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    Float exp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,7 +164,21 @@ public class MainActivity extends AppCompatActivity {
                                 dailyRec.setIsCheckedIn(true);
                                 dailyRec.setDate(d.getDate());
                                 //ToDo: send this value to database so that if anyone clears the prefs, it still wont fuck up.
-                                Toast.makeText(context,"noted!",Toast.LENGTH_SHORT).show();
+                                try {
+                                    if(InternetCheck.internetCheck(context))
+                                    {
+                                        databaseReference.push().setValue("check-in time : "+sDate);
+                                        Toast.makeText(context,"noted!",Toast.LENGTH_SHORT).show();
+                                    }
+                                    else {
+                                        Toast.makeText(context,"no internet access!",Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    Toast.makeText(context,"please restart the app and try again",Toast.LENGTH_SHORT).show();
+                                }
+
                             }
                             else
                                 Toast.makeText(context,"already checked in!",Toast.LENGTH_SHORT).show();
@@ -210,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
                                     dailyRecSetCheckedIn.setIsCheckedIn(false);
                                     Toast.makeText(getApplicationContext(), "Checked out!", Toast.LENGTH_SHORT).show();
                                     getExp(context);
+
                                 }
                             });
 
@@ -253,8 +269,8 @@ public class MainActivity extends AppCompatActivity {
                             Date d = new Date(longD);
                             SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
                             String sDate = sdf.format(d);
-                            //String name = getNameOfLocation(context);
-                            LocationDets locationDets = new LocationDets("name",
+                            getNameOfLocation(context);
+                            LocationDets locationDets = new LocationDets(nameOfLocation,
                                     add.get(0).getAddressLine(0)+" "+add.get(0).getSubLocality()+" "+add.get(0).getLocality(),
                                     sDate.substring(0,9),sDate.substring(10,17));
                             try
@@ -308,12 +324,12 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("send",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
-                                EditText exp = (EditText) promptsView.findViewById(R.id.exp);
+                                EditText et_exp = (EditText) promptsView.findViewById(R.id.et_exp);
                                 DailyRec dailyRec = new DailyRec(context);
                                 dailyRec.setIsCheckedIn(false);
-                                if(!(exp.getText().toString().equals("")||exp.getText().toString().contains(" ")))
+                                if(!(et_exp.getText().toString().equals("")||et_exp.getText().toString().contains(" ")))
                                 {
-                                    Float.parseFloat(exp.getText().toString());
+                                    exp=Float.parseFloat(et_exp.getText().toString());
                                     //ToDo: send this value to database
                                     Toast.makeText(context,"Hope you had a nice day!",Toast.LENGTH_SHORT).show();
                                 }
@@ -326,9 +342,8 @@ public class MainActivity extends AppCompatActivity {
                         });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
-    }/*
-    public String getNameOfLocation(Context context) {
-        String nameOfLocation="";
+    }
+    public void getNameOfLocation(Context context) {
         LayoutInflater li = LayoutInflater.from(context);
         final View promptsView = li.inflate(R.layout.name_of_location,null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -339,10 +354,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                          EditText name = (EditText) promptsView.findViewById(R.id.name_of_location);
-                         //nameOfLocation = name.getText().toString();
-                        Int
+                         nameOfLocation = name.getText().toString();
                     }
                 });
-        return nameOfLocation;
-    }*/
+    }
 }
