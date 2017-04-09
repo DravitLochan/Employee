@@ -16,6 +16,7 @@ public class DailyRec {
     private static final String PREF_NAME = "employee";
     private static final String IS_CHECKED_IN = "IsChecked";
     private static final String DATE = "date";
+    private static final String CHECK_IN_TIME = "checkInTime";
 
     public DailyRec()
     {
@@ -43,6 +44,17 @@ public class DailyRec {
 
     public void setDate(int date) {
         editor.putInt(DATE, date);
+        editor.commit();
+    }
+
+    public String getCheckInTime()
+    {
+        return prefs.getString(CHECK_IN_TIME,null);
+    }
+
+    public void setCheckInTime(String checkInTime)
+    {
+        editor.putString(CHECK_IN_TIME,checkInTime);
         editor.commit();
     }
 }
