@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import ims.com.employee.Helpers.InternetCheck;
+import ims.com.employee.Models.DailyRecord;
 import ims.com.employee.Models.LocationDets;
 import ims.com.employee.prefs.DailyRec;
 import ims.com.employee.prefs.UserCreds;
@@ -161,13 +162,14 @@ public class MainActivity extends AppCompatActivity {
                             //dailyRec = new DailyRec(context);
                             if(dailyRec.getIsCheckedIn()==false)
                             {
-                                dailyRec.setIsCheckedIn(true);
-                                dailyRec.setDate(d.getDate());
                                 //ToDo: send this value to database so that if anyone clears the prefs, it still wont fuck up.
                                 try {
                                     if(InternetCheck.internetCheck(context))
                                     {
                                         databaseReference.push().setValue("check-in time : "+sDate);
+                                        dailyRec.setIsCheckedIn(true);
+                                        dailyRec.setDate(d.getDate());
+                                        dailyRec.setCheckInTime(sDate);
                                         Toast.makeText(context,"noted!",Toast.LENGTH_SHORT).show();
                                     }
                                     else {
@@ -201,13 +203,13 @@ public class MainActivity extends AppCompatActivity {
                 else
                 {
                     //here there maybe a bug because it is declared final
-                    DailyRec dailyRec= new DailyRec(context);
+                    final DailyRec dailyRec= new DailyRec(context);
                     if(dailyRec.getIsCheckedIn()==true)
                     {
                         long longD = devLocation.getTime();
                         Date d = new Date(longD);
                         SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
-                        String sDate = sdf.format(d);
+                        final String sDate = sdf.format(d);
                         if((d.getHours()>=10&&d.getHours()<16))
                         {
                             AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
@@ -225,7 +227,8 @@ public class MainActivity extends AppCompatActivity {
                                     dailyRecSetCheckedIn.setIsCheckedIn(false);
                                     Toast.makeText(getApplicationContext(), "Checked out!", Toast.LENGTH_SHORT).show();
                                     getExp(context);
-
+                                    DailyRecord dailyRecord = new DailyRecord(dailyRec.getCheckInTime(),sDate,exp);
+                                    databaseReference.push().setValue(dailyRecord);
                                 }
                             });
 
@@ -244,6 +247,14 @@ public class MainActivity extends AppCompatActivity {
                         else
                         {
                             getExp(context);
+                            try{
+                                DailyRecord dailyRecord = new DailyRecord(dailyRec.getCheckInTime(),sDate,exp);
+                                databaseReference.push().setValue(dailyRecord);
+                            }
+                            catch (Exception e)
+                            {
+                                Toast.makeText(context,"error occured! please report to admin",Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                     else
