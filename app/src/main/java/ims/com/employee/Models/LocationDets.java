@@ -6,7 +6,7 @@ import io.realm.RealmObject;
  * Created by DravitLochan on 07-04-2017.
  */
 
-public class LocationDets extends RealmObject {
+public class LocationDets {
 
     private String name, address, date, time;
 

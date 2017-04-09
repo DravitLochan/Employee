@@ -31,7 +31,6 @@ public class Signup extends AppCompatActivity {
     private ProgressDialog progressDialog;
 
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mDatabaseReference;
     private FirebaseAuth auth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +47,6 @@ public class Signup extends AppCompatActivity {
 
         mFirebaseDatabase=FirebaseDatabase.getInstance();
         auth=FirebaseAuth.getInstance();
-        mDatabaseReference=mFirebaseDatabase.getReference().child("users");
 
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,7 +71,6 @@ public class Signup extends AppCompatActivity {
                                             UserCreds userCreds = new UserCreds(context);
                                             userCreds.setIsUserSet(true);
                                             userCreds.setUser(u);
-                                            mDatabaseReference.push().setValue(u);
                                             DatabaseReference userDBRference = mFirebaseDatabase.getReference().child(signup_user_name.getText().toString()+"");
                                             userDBRference.push().setValue(u);
                                             progressDialog.dismiss();

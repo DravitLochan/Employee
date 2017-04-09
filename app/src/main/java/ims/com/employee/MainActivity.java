@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -29,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import ims.com.employee.Helpers.InternetCheck;
 import ims.com.employee.Models.LocationDets;
@@ -84,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
                 timeUpdated.setText("time : "+sDate + "");
                 */
                 devLocation = location;
-
                 //Toast.makeText(getApplicationContext(), "test123", Toast.LENGTH_SHORT).show();
             }
 
@@ -240,7 +241,6 @@ public class MainActivity extends AppCompatActivity {
         update_me.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Toast.makeText(context,"coming soon..!!",Toast.LENGTH_SHORT).show();
                 DailyRec dailyRec = new DailyRec(context);
                 if(dailyRec.getIsCheckedIn()==true)
                 {
@@ -249,8 +249,24 @@ public class MainActivity extends AppCompatActivity {
                         if(InternetCheck.internetCheck(context)==true)
                         {
                             List<Address> add = geocoder.getFromLocation(devLocation.getLatitude(), devLocation.getLongitude(), 1);
-                            LocationDets locationDets = new LocationDets("name",add.get(0).getAddressLine(0),dailyRec.getDate()+"",devLocation.getTime()+"");
-                            databaseReference.push().setValue(locationDets);
+                            long longD = devLocation.getTime();
+                            Date d = new Date(longD);
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
+                            String sDate = sdf.format(d);
+                            //String name = getNameOfLocation(context);
+                            LocationDets locationDets = new LocationDets("name",
+                                    add.get(0).getAddressLine(0)+" "+add.get(0).getSubLocality()+" "+add.get(0).getLocality(),
+                                    sDate.substring(0,9),sDate.substring(10,17));
+                            try
+                            {
+                                databaseReference.push().setValue(locationDets);
+                            }
+                            catch (Exception e)
+                            {
+                                Toast.makeText(context,"error occured",Toast.LENGTH_SHORT).show();
+                                Log.d("update push",""+e.getMessage().toString());
+                            }
+                            Toast.makeText(context,"updated!",Toast.LENGTH_SHORT).show();
                         }
                         else
                         {
@@ -308,8 +324,25 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         });
-
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
-    }
+    }/*
+    public String getNameOfLocation(Context context) {
+        String nameOfLocation="";
+        LayoutInflater li = LayoutInflater.from(context);
+        final View promptsView = li.inflate(R.layout.name_of_location,null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setView(promptsView);
+        alertDialogBuilder.setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                         EditText name = (EditText) promptsView.findViewById(R.id.name_of_location);
+                         //nameOfLocation = name.getText().toString();
+                        Int
+                    }
+                });
+        return nameOfLocation;
+    }*/
 }
