@@ -283,7 +283,7 @@ public class MainActivity extends AppCompatActivity {
                             getNameOfLocation(context);
                             LocationDets locationDets = new LocationDets(nameOfLocation,
                                     add.get(0).getAddressLine(0)+" "+add.get(0).getSubLocality()+" "+add.get(0).getLocality(),
-                                    sDate.substring(0,9),sDate.substring(10,17));
+                                    sDate.substring(0,9),sDate.substring(9,17));
                             try
                             {
                                 databaseReference.push().setValue(locationDets);
