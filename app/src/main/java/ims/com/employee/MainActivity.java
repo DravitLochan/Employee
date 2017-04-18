@@ -54,13 +54,13 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     Float exp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)!=PackageManager.PERMISSION_GRANTED)
-        {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},permReqCode);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, permReqCode);
         }
         sales_sheet = (Button) findViewById(R.id.button_sales_sheet);
         update_me = (Button) findViewById(R.id.update_me);
@@ -71,14 +71,12 @@ public class MainActivity extends AppCompatActivity {
         userCreds = new UserCreds(context);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child(userCreds.getUser().getUser_name()+"");
+        databaseReference = firebaseDatabase.getReference().child(userCreds.getUser().getUser_name() + "");
 
         if (!userCreds.getIsUserSet()) {
             startActivity(new Intent(MainActivity.this, Login.class));
             finish();
-        }
-        else
-        {
+        } else {
             Toast.makeText(context, "welcome " + userCreds.getUser().getEmail(), Toast.LENGTH_SHORT).show();
         }
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -95,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {
-                Toast.makeText(context,"switch on the location", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "switch on the location", Toast.LENGTH_SHORT).show();
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("GPS not enabled");
                 builder.setMessage("open and enable location via gps");
@@ -118,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
             public void onProviderDisabled(String provider) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle("GPS not found");
-                Toast.makeText(context,"switch on the location", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "switch on the location", Toast.LENGTH_SHORT).show();
                 builder.setMessage("open and enable location via gps");
                 builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -144,53 +142,40 @@ public class MainActivity extends AppCompatActivity {
         check_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(devLocation==null)
-                {
-                    Toast.makeText(context,"please wait...",Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
+                if (devLocation == null) {
+                    Toast.makeText(context, "please wait...", Toast.LENGTH_SHORT).show();
+                } else {
                     long longD = devLocation.getTime();
                     Date d = new Date(longD);
                     SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
                     String sDate = sdf.format(d);
                     DailyRec dailyRec = new DailyRec(context);
-                    if(dailyRec.getDate()!=d.getDate())
-                    {
-                        if(!(d.getHours()>=10&&d.getHours()<=19))
-                            Toast.makeText(context,"Office hours starts @10!",Toast.LENGTH_SHORT).show();
-                        else
-                        {
+                    if (dailyRec.getDate() != d.getDate()) {
+                        if (!(d.getHours() >= 10 && d.getHours() <= 19))
+                            Toast.makeText(context, "Office hours starts @10!", Toast.LENGTH_SHORT).show();
+                        else {
                             //dailyRec = new DailyRec(context);
-                            if(dailyRec.getIsCheckedIn()==false)
-                            {
+                            if (dailyRec.getIsCheckedIn() == false) {
                                 //ToDo: send this value to database so that if anyone clears the prefs, it still wont fuck up.
                                 try {
-                                    if(InternetCheck.internetCheck(context))
-                                    {
-                                        databaseReference.push().setValue("check-in time : "+sDate);
+                                    if (InternetCheck.internetCheck(context)) {
+                                        databaseReference.push().setValue("check-in time : " + sDate);
                                         dailyRec.setIsCheckedIn(true);
                                         dailyRec.setDate(d.getDate());
                                         dailyRec.setCheckInTime(sDate);
-                                        Toast.makeText(context,"noted!",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "noted!", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(context, "no internet access!", Toast.LENGTH_SHORT).show();
                                     }
-                                    else {
-                                        Toast.makeText(context,"no internet access!",Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                    Toast.makeText(context,"please restart the app and try again",Toast.LENGTH_SHORT).show();
+                                } catch (Exception e) {
+                                    Toast.makeText(context, "please restart the app and try again", Toast.LENGTH_SHORT).show();
                                 }
 
-                            }
-                            else
-                                Toast.makeText(context,"already checked in!",Toast.LENGTH_SHORT).show();
+                            } else
+                                Toast.makeText(context, "already checked in!", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                    else
-                    {
-                        Toast.makeText(context,"you can check-in only once per day!",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "you can check-in only once per day!", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -198,22 +183,17 @@ public class MainActivity extends AppCompatActivity {
         check_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(devLocation==null)
-                {
-                    Toast.makeText(context,"please wait...",Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
+                if (devLocation == null) {
+                    Toast.makeText(context, "please wait...", Toast.LENGTH_SHORT).show();
+                } else {
                     //here there maybe a bug because it is declared final
-                    final DailyRec dailyRec= new DailyRec(context);
-                    if(dailyRec.getIsCheckedIn()==true)
-                    {
+                    final DailyRec dailyRec = new DailyRec(context);
+                    if (dailyRec.getIsCheckedIn() == true) {
                         long longD = devLocation.getTime();
                         Date d = new Date(longD);
                         SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
                         final String sDate = sdf.format(d);
-                        if((d.getHours()>=10&&d.getHours()<16))
-                        {
+                        if ((d.getHours() >= 10 && d.getHours() < 16)) {
                             AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
 
                             // Setting Dialog Title
@@ -224,12 +204,12 @@ public class MainActivity extends AppCompatActivity {
 
                             // Setting Positive "Yes" Button
                             alertDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int which) {
+                                public void onClick(DialogInterface dialog, int which) {
                                     DailyRec dailyRecSetCheckedIn = new DailyRec(context);
                                     dailyRecSetCheckedIn.setIsCheckedIn(false);
                                     Toast.makeText(getApplicationContext(), "Checked out!", Toast.LENGTH_SHORT).show();
                                     getExp(context);
-                                    DailyRecord dailyRecord = new DailyRecord(dailyRec.getCheckInTime(),sDate,exp);
+                                    DailyRecord dailyRecord = new DailyRecord(dailyRec.getCheckInTime(), sDate, exp);
                                     databaseReference.push().setValue(dailyRecord);
                                 }
                             });
@@ -245,23 +225,17 @@ public class MainActivity extends AppCompatActivity {
 
                             // Showing Alert Message
                             alertDialog.show();
-                        }
-                        else
-                        {
+                        } else {
                             getExp(context);
-                            try{
-                                DailyRecord dailyRecord = new DailyRecord(dailyRec.getCheckInTime(),sDate,exp);
+                            try {
+                                DailyRecord dailyRecord = new DailyRecord(dailyRec.getCheckInTime(), sDate, exp);
                                 databaseReference.push().setValue(dailyRecord);
-                            }
-                            catch (Exception e)
-                            {
-                                Toast.makeText(context,"error occured! please report to admin",Toast.LENGTH_SHORT).show();
+                            } catch (Exception e) {
+                                Toast.makeText(context, "error occured! please report to admin", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    }
-                    else
-                    {
-                        Toast.makeText(context,"you have not checked in yet",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "you have not checked in yet", Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -271,12 +245,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 DailyRec dailyRec = new DailyRec(context);
-                if(dailyRec.getIsCheckedIn()==true)
-                {
+                if (dailyRec.getIsCheckedIn() == true) {
                     try {
                         //details.setText(add.get(0).getLocality()+"\n"+add.get(0).getAddressLine(0)+"\n"+add.get(0).getFeatureName()+"\n"+"\n"+add.get(0).getSubLocality());
-                        if(InternetCheck.internetCheck(context)==true)
-                        {
+                        if (InternetCheck.internetCheck(context) == true) {
                             List<Address> add = geocoder.getFromLocation(devLocation.getLatitude(), devLocation.getLongitude(), 1);
                             long longD = devLocation.getTime();
                             Date d = new Date(longD);
@@ -284,38 +256,31 @@ public class MainActivity extends AppCompatActivity {
                             String sDate = sdf.format(d);
                             getNameOfLocation(context);
                             LocationDets locationDets = new LocationDets(nameOfLocation,
-                                    add.get(0).getAddressLine(0)+" "+add.get(0).getSubLocality()+" "+add.get(0).getLocality(),
-                                    sDate.substring(0,9),sDate.substring(9,17));
-                            try
-                            {
+                                    add.get(0).getAddressLine(0) + " " + add.get(0).getSubLocality() + " " + add.get(0).getLocality(),
+                                    sDate.substring(0, 9), sDate.substring(9, 17));
+                            try {
                                 databaseReference.push().setValue(locationDets);
+                            } catch (Exception e) {
+                                Toast.makeText(context, "error occured", Toast.LENGTH_SHORT).show();
+                                Log.d("update push", "" + e.getMessage().toString());
                             }
-                            catch (Exception e)
-                            {
-                                Toast.makeText(context,"error occured",Toast.LENGTH_SHORT).show();
-                                Log.d("update push",""+e.getMessage().toString());
-                            }
-                            Toast.makeText(context,"updated!",Toast.LENGTH_SHORT).show();
-                        }
-                        else
-                        {
-                            Toast.makeText(context,"No Internet Access!",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, "updated!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(context, "No Internet Access!", Toast.LENGTH_SHORT).show();
                         }
                     } catch (IOException e) {
-                        Toast.makeText(context,"Some error occured. Please restart the application",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Some error occured. Please restart the application", Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(context,"you need to check-in first!",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "you need to check-in first!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
         sales_sheet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "soon we will let you track your progress",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "soon we will let you track your progress", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -326,8 +291,7 @@ public class MainActivity extends AppCompatActivity {
         //Toast.makeText(context,"allow location access to the app!",Toast.LENGTH_SHORT).show();
     }*/
 
-    public void getExp(final Context context)
-    {
+    public void getExp(final Context context) {
         LayoutInflater li = LayoutInflater.from(context);
         final View promptsView = li.inflate(R.layout.expences, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -336,19 +300,16 @@ public class MainActivity extends AppCompatActivity {
                 .setCancelable(false)
                 .setPositiveButton("send",
                         new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {
+                            public void onClick(DialogInterface dialog, int id) {
                                 EditText et_exp = (EditText) promptsView.findViewById(R.id.et_exp);
                                 DailyRec dailyRec = new DailyRec(context);
                                 dailyRec.setIsCheckedIn(false);
-                                if(!(et_exp.getText().toString().equals("")||et_exp.getText().toString().contains(" ")))
-                                {
-                                    exp=Float.parseFloat(et_exp.getText().toString());
+                                if (!(et_exp.getText().toString().equals("") || et_exp.getText().toString().contains(" "))) {
+                                    exp = Float.parseFloat(et_exp.getText().toString());
                                     //ToDo: send this value to database
-                                    Toast.makeText(context,"Hope you had a nice day!",Toast.LENGTH_SHORT).show();
-                                }
-                                else
-                                {
-                                    Toast.makeText(context,"enter a valid amount!",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "Hope you had a nice day!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(context, "enter a valid amount!", Toast.LENGTH_SHORT).show();
                                     getExp(context);
                                 }
                             }
@@ -356,20 +317,21 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
+
     public void getNameOfLocation(Context context) {
         LayoutInflater li = LayoutInflater.from(context);
-        final View promptsView = li.inflate(R.layout.name_of_location,null);
+        final View promptsView = li.inflate(R.layout.name_of_location, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setView(promptsView);
         alertDialogBuilder.setCancelable(false)
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                         EditText name = (EditText) promptsView.findViewById(R.id.name_of_location);
-                         nameOfLocation = name.getText().toString();
-                    }
-                });
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                EditText name = (EditText) promptsView.findViewById(R.id.name_of_location);
+                                nameOfLocation = name.getText().toString();
+                            }
+                        });
     }
 
     @Override
@@ -381,15 +343,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if(id==R.id.action_logout)
-        {
+        if (id == R.id.action_logout) {
             UserCreds userCreds = new UserCreds(context);
             userCreds.setIsUserSet(false);
-            startActivity(new Intent(MainActivity.this,Login.class));
+            startActivity(new Intent(MainActivity.this, Login.class));
             finish();
             return true;
         }
