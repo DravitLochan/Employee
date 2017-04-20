@@ -83,12 +83,7 @@ public class MainActivity extends AppCompatActivity {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                //Toast.makeText(getApplicationContext(), "called!", Toast.LENGTH_SHORT).show();
-                /*
-                timeUpdated.setText("time : "+sDate + "");
-                */
                 devLocation = location;
-                //Toast.makeText(getApplicationContext(), "test123", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -139,47 +134,21 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 5, locationListener);
+
+
         check_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (devLocation == null) {
                     Toast.makeText(context, "please wait...", Toast.LENGTH_SHORT).show();
-                } else {
-                    long longD = devLocation.getTime();
-                    Date d = new Date(longD);
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
-                    String sDate = sdf.format(d);
-                    DailyRec dailyRec = new DailyRec(context);
-                    if (dailyRec.getDate() != d.getDate()) {
-                        if (!(d.getHours() >= 10 && d.getHours() <= 19))
-                            Toast.makeText(context, "Office hours starts @10!", Toast.LENGTH_SHORT).show();
-                        else {
-                            //dailyRec = new DailyRec(context);
-                            if (dailyRec.getIsCheckedIn() == false) {
-                                //ToDo: send this value to database so that if anyone clears the prefs, it still wont fuck up.
-                                try {
-                                    if (InternetCheck.internetCheck(context)) {
-                                        databaseReference.push().setValue("check-in time : " + sDate);
-                                        dailyRec.setIsCheckedIn(true);
-                                        dailyRec.setDate(d.getDate());
-                                        dailyRec.setCheckInTime(sDate);
-                                        Toast.makeText(context, "noted!", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(context, "no internet access!", Toast.LENGTH_SHORT).show();
-                                    }
-                                } catch (Exception e) {
-                                    Toast.makeText(context, "please restart the app and try again", Toast.LENGTH_SHORT).show();
-                                }
+                }
+                else{
 
-                            } else
-                                Toast.makeText(context, "already checked in!", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(context, "you can check-in only once per day!", Toast.LENGTH_SHORT).show();
-                    }
                 }
             }
         });
+
+
         check_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
