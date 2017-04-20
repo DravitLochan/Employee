@@ -28,12 +28,14 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import ims.com.employee.DatabaseHelper.EmployeeDatabaseHelper;
 import ims.com.employee.Helpers.InternetCheck;
-import ims.com.employee.Models.DailyRecord;
+import ims.com.employee.Models.EmployeeCheckInModel;
 import ims.com.employee.Models.LocationDets;
 import ims.com.employee.prefs.DailyRec;
 import ims.com.employee.prefs.UserCreds;
@@ -138,10 +140,37 @@ public class MainActivity extends AppCompatActivity {
         check_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                View dialogView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.description, null);
+                builder.setView(dialogView);
+                final AlertDialog alertDialog = builder.create();
+
+                check_in.setEnabled(Boolean.FALSE);
+                check_out.setEnabled(Boolean.TRUE);
+
                 if (devLocation == null) {
                     Toast.makeText(context, "please wait...", Toast.LENGTH_SHORT).show();
                 }
                 else{
+                    alertDialog.show();
+                    final EditText location = (EditText) dialogView.findViewById(R.id.name_of_location);
+                    final EditText description = (EditText) dialogView.findViewById(R.id.descripiton);
+                    final Button submitButton = (Button) dialogView.findViewById(R.id.submit_button);
+                    submitButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String timeStamp = new SimpleDateFormat("dd:MM:yy HH:mm:ss").format(Calendar.getInstance().getTime());
+                            EmployeeCheckInModel employeeCheckInModel = new EmployeeCheckInModel();
+                            employeeCheckInModel.setLocation(location.getText().toString());
+                            employeeCheckInModel.setDescription(description.getText().toString());
+                            employeeCheckInModel.setLoc_details(devLocation.toString());
+                            employeeCheckInModel.setCheck_in_time(timeStamp);
+                            EmployeeDatabaseHelper db = new EmployeeDatabaseHelper(getBaseContext());
+                            db.insertNewCheckInDetails(employeeCheckInModel);
+                            Toast.makeText(getBaseContext(), "Checked In Successfully", Toast.LENGTH_SHORT).show();
+                            alertDialog.dismiss();
+                        }
+                    });
                 }
             }
         });
@@ -150,9 +179,17 @@ public class MainActivity extends AppCompatActivity {
         check_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                check_in.setEnabled(Boolean.TRUE);
+                check_out.setEnabled(Boolean.FALSE);
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                View dialogView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.checkout_description, null);
+                builder.setView(dialogView);
+                final AlertDialog alertDialog = builder.create();
+
                 if (devLocation == null) {
                     Toast.makeText(context, "please wait...", Toast.LENGTH_SHORT).show();
                 } else {
+/*
                     //here there maybe a bug because it is declared final
                     final DailyRec dailyRec = new DailyRec(context);
                     if (dailyRec.getIsCheckedIn() == true) {
@@ -204,6 +241,28 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         Toast.makeText(context, "you have not checked in yet", Toast.LENGTH_SHORT).show();
                     }
+*/
+                    alertDialog.show();
+                    final EditText description = (EditText) dialogView.findViewById(R.id.check_out_descripiton);
+                    final Button submitButton = (Button) dialogView.findViewById(R.id.check_out_submit_button);
+                    submitButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String timeStamp = new SimpleDateFormat("dd:MM:yy HH:mm:ss").format(Calendar.getInstance().getTime());
+                            EmployeeDatabaseHelper db = new EmployeeDatabaseHelper(getBaseContext());
+                            EmployeeCheckInModel employee = db.getCheckInDetails();
+                            employee.setCheck_out_description(description.getText().toString());
+                            employee.setCheck_out_time(timeStamp);
+                            //Todo
+                            employee.setReminder("");
+                            DatabaseReference ref = databaseReference.child("Check In Details");
+                            ref.push().setValue(employee);
+                            db.deleteCheckInDetails();
+                            Toast.makeText(getBaseContext(), "Checked Out Successfully", Toast.LENGTH_SHORT).show();
+                            alertDialog.dismiss();
+                        }
+                    });
+
 
                 }
             }

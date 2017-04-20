@@ -9,6 +9,33 @@ public class EmployeeCheckInModel {
     String location;
     String loc_details;
     String description;
+    String check_out_description;
+    String check_out_time;
+    String reminder;
+
+    public String getCheck_out_description() {
+        return check_out_description;
+    }
+
+    public void setCheck_out_description(String check_out_description) {
+        this.check_out_description = check_out_description;
+    }
+
+    public String getCheck_out_time() {
+        return check_out_time;
+    }
+
+    public void setCheck_out_time(String check_out_time) {
+        this.check_out_time = check_out_time;
+    }
+
+    public String getReminder() {
+        return reminder;
+    }
+
+    public void setReminder(String reminder) {
+        this.reminder = reminder;
+    }
 
     public String getCheck_in_time() {
         return check_in_time;

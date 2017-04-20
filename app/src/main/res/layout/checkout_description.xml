@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -10,30 +9,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="CHECK IN DETAILS"
+        android:text="CHECK OUT DETAILS"
         android:textColor="@android:color/black"
         android:textSize="28sp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginTop="24dp"
-        android:padding="4dp"
-        android:text="Name of the place:"
-        android:textColor="#000000"
-        android:textStyle="bold" />
-
-    <EditText
-        android:id="@+id/name_of_location"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="4dp"
-        android:maxLength="40"
-        android:textColor="#000000" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -47,7 +25,7 @@
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/descripiton"
+        android:id="@+id/check_out_descripiton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
@@ -56,10 +34,10 @@
         android:inputType="textMultiLine"
         android:lines="2"
         android:scrollHorizontally="false"
-        android:textColor="#000000"/>
+        android:textColor="#000000" />
 
     <Button
-        android:id="@+id/submit_button"
+        android:id="@+id/check_out_submit_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
