@@ -1,5 +1,6 @@
 package ims.com.employee;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,8 +22,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.Manifest;
-
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -32,7 +31,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 import ims.com.employee.Helpers.InternetCheck;
 import ims.com.employee.Models.DailyRecord;
@@ -42,6 +40,7 @@ import ims.com.employee.prefs.UserCreds;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static int permReqCode = 111;
     Context context;
     UserCreds userCreds;
     Geocoder geocoder;
@@ -49,11 +48,10 @@ public class MainActivity extends AppCompatActivity {
     LocationListener locationListener;
     Button check_in, check_out, track_status, sales_sheet;
     Location devLocation;
-    private static int permReqCode = 111;
     String nameOfLocation;
+    Float exp;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
-    Float exp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +142,6 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(context, "please wait...", Toast.LENGTH_SHORT).show();
                 }
                 else{
-
                 }
             }
         });
