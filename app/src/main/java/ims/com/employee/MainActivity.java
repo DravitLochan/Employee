@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     Geocoder geocoder;
     LocationManager locationManager;
     LocationListener locationListener;
-    Button check_in, check_out, update_me, sales_sheet;
+    Button check_in, check_out, track_status, sales_sheet;
     Location devLocation;
     private static int permReqCode = 111;
     String nameOfLocation;
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, permReqCode);
         }
         sales_sheet = (Button) findViewById(R.id.button_sales_sheet);
-        update_me = (Button) findViewById(R.id.update_me);
+        track_status = (Button) findViewById(R.id.track_status);
         check_in = (Button) findViewById(R.id.button_check_in);
         check_out = (Button) findViewById(R.id.button_check_out);
         geocoder = new Geocoder(this, Locale.getDefault());
@@ -83,12 +83,7 @@ public class MainActivity extends AppCompatActivity {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                //Toast.makeText(getApplicationContext(), "called!", Toast.LENGTH_SHORT).show();
-                /*
-                timeUpdated.setText("time : "+sDate + "");
-                */
                 devLocation = location;
-                //Toast.makeText(getApplicationContext(), "test123", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -139,47 +134,22 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 5, locationListener);
+
+
+
         check_in.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (devLocation == null) {
                     Toast.makeText(context, "please wait...", Toast.LENGTH_SHORT).show();
-                } else {
-                    long longD = devLocation.getTime();
-                    Date d = new Date(longD);
-                    SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
-                    String sDate = sdf.format(d);
-                    DailyRec dailyRec = new DailyRec(context);
-                    if (dailyRec.getDate() != d.getDate()) {
-                        if (!(d.getHours() >= 10 && d.getHours() <= 19))
-                            Toast.makeText(context, "Office hours starts @10!", Toast.LENGTH_SHORT).show();
-                        else {
-                            //dailyRec = new DailyRec(context);
-                            if (dailyRec.getIsCheckedIn() == false) {
-                                //ToDo: send this value to database so that if anyone clears the prefs, it still wont fuck up.
-                                try {
-                                    if (InternetCheck.internetCheck(context)) {
-                                        databaseReference.push().setValue("check-in time : " + sDate);
-                                        dailyRec.setIsCheckedIn(true);
-                                        dailyRec.setDate(d.getDate());
-                                        dailyRec.setCheckInTime(sDate);
-                                        Toast.makeText(context, "noted!", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(context, "no internet access!", Toast.LENGTH_SHORT).show();
-                                    }
-                                } catch (Exception e) {
-                                    Toast.makeText(context, "please restart the app and try again", Toast.LENGTH_SHORT).show();
-                                }
+                }
+                else{
 
-                            } else
-                                Toast.makeText(context, "already checked in!", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(context, "you can check-in only once per day!", Toast.LENGTH_SHORT).show();
-                    }
                 }
             }
         });
+
+
         check_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -241,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        update_me.setOnClickListener(new View.OnClickListener() {
+        track_status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DailyRec dailyRec = new DailyRec(context);
@@ -254,7 +224,6 @@ public class MainActivity extends AppCompatActivity {
                             Date d = new Date(longD);
                             SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
                             String sDate = sdf.format(d);
-                            getNameOfLocation(context);
                             LocationDets locationDets = new LocationDets(nameOfLocation,
                                     add.get(0).getAddressLine(0) + " " + add.get(0).getSubLocality() + " " + add.get(0).getLocality(),
                                     sDate.substring(0, 9), sDate.substring(9, 17));
@@ -318,21 +287,7 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public void getNameOfLocation(Context context) {
-        LayoutInflater li = LayoutInflater.from(context);
-        final View promptsView = li.inflate(R.layout.name_of_location, null);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setView(promptsView);
-        alertDialogBuilder.setCancelable(false)
-                .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                EditText name = (EditText) promptsView.findViewById(R.id.name_of_location);
-                                nameOfLocation = name.getText().toString();
-                            }
-                        });
-    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
