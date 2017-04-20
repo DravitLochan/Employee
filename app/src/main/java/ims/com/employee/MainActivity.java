@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     Geocoder geocoder;
     LocationManager locationManager;
     LocationListener locationListener;
-    Button check_in, check_out, update_me, sales_sheet;
+    Button check_in, check_out, track_status, sales_sheet;
     Location devLocation;
     private static int permReqCode = 111;
     String nameOfLocation;
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, permReqCode);
         }
         sales_sheet = (Button) findViewById(R.id.button_sales_sheet);
-        update_me = (Button) findViewById(R.id.update_me);
+        track_status = (Button) findViewById(R.id.track_status);
         check_in = (Button) findViewById(R.id.button_check_in);
         check_out = (Button) findViewById(R.id.button_check_out);
         geocoder = new Geocoder(this, Locale.getDefault());
@@ -134,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 5, locationListener);
+
 
 
         check_in.setOnClickListener(new View.OnClickListener() {
@@ -210,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        update_me.setOnClickListener(new View.OnClickListener() {
+        track_status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DailyRec dailyRec = new DailyRec(context);
@@ -223,7 +224,6 @@ public class MainActivity extends AppCompatActivity {
                             Date d = new Date(longD);
                             SimpleDateFormat sdf = new SimpleDateFormat("dd:MM:yy HH:mm:ss");
                             String sDate = sdf.format(d);
-                            getNameOfLocation(context);
                             LocationDets locationDets = new LocationDets(nameOfLocation,
                                     add.get(0).getAddressLine(0) + " " + add.get(0).getSubLocality() + " " + add.get(0).getLocality(),
                                     sDate.substring(0, 9), sDate.substring(9, 17));
@@ -287,21 +287,7 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public void getNameOfLocation(Context context) {
-        LayoutInflater li = LayoutInflater.from(context);
-        final View promptsView = li.inflate(R.layout.name_of_location, null);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setView(promptsView);
-        alertDialogBuilder.setCancelable(false)
-                .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                EditText name = (EditText) promptsView.findViewById(R.id.name_of_location);
-                                nameOfLocation = name.getText().toString();
-                            }
-                        });
-    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -29,8 +29,8 @@
         android:background="@color/b1"/>
 
     <Button
-        android:id="@+id/button_check_in"
-        android:text="check-in"
+        android:id="@+id/track_status"
+        android:text="start day"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/horizontal_divider"
@@ -38,8 +38,8 @@
         android:background="@color/b2"/>
 
     <Button
-        android:id="@+id/button_check_out"
-        android:text="check-out"
+        android:id="@+id/button_check_in"
+        android:text="check-in"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/horizontal_divider"
@@ -47,8 +47,8 @@
         android:background="@color/b3"/>
 
     <Button
-        android:id="@+id/update_me"
-        android:text="update"
+        android:id="@+id/button_check_out"
+        android:text="check-out"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/horizontal_divider"
