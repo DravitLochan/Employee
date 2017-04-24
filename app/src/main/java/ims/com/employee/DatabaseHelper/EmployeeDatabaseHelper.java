@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import ims.com.employee.Models.EmployeeCheckInModel;
 
@@ -16,12 +17,18 @@ public class EmployeeDatabaseHelper extends SQLiteOpenHelper {
 
     private static final int VERSION = 1;
     private static final String DATABASE_NAME = "Employee";
+    private static final String TABLE_NAME = "EmployeeDetails";
 
-    private static final String CHECK_IN_TABLE_NAME = "Employee_check_in";
-    private static final String CHECK_IN_TIME = "Employee_check_in_time";
-    private static final String CHECK_IN_LOCATION = "Employee_check_in_location";
-    private static final String CHECK_IN_LOCATION_DETAILS = "Employee_check_in_location_details";
-    private static final String CHECK_IN_DESCRIPTION = "Employee_check_in_description";
+    private static final String ID = "id";
+
+    private static final String CHECK_IN_TIME = "check_in_time";
+    private static final String CHECK_IN_LOCATION = "check_in_location";
+    private static final String CHECK_IN_LOCATION_DETAILS = "check_in_details";
+    private static final String CHECK_IN_DESCRIPTION = "check_in_description";
+    private static final String CHECK_OUT_TIME = "checkout_time";
+    private static final String CHECK_OUT_LOCATION = "check_in_location";
+    private static final String CHECK_OUT_LOCATION_DETAILS = "check_out_details";
+    private static final String CHECK_OUT_DESCRIPTION = "check_out_description";
 
 
     public EmployeeDatabaseHelper(Context context) {
@@ -30,27 +37,42 @@ public class EmployeeDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String checkInTable = "CREATE TABLE " + CHECK_IN_TABLE_NAME + " (" +
-                CHECK_IN_TIME + " VARCHAR, " +
-                CHECK_IN_LOCATION + " VARCHAR, " +
-                CHECK_IN_LOCATION_DETAILS + " VARCHAR, " +
-                CHECK_IN_DESCRIPTION + " VARCHAR " +
+        String checkInTable = "CREATE TABLE " + TABLE_NAME + " (" +
+                ID + " INTEGER PRIMARY KEY autoincrement, " +
+                CHECK_IN_TIME + " TEXT, " +
+                CHECK_IN_LOCATION + " TEXT, " +
+                CHECK_IN_LOCATION_DETAILS + " TEXT, " +
+                CHECK_IN_DESCRIPTION + " TEXT " +
+                CHECK_OUT_TIME + " TEXT " +
+                CHECK_OUT_LOCATION + " TEXT, " +
+                CHECK_OUT_LOCATION_DETAILS + " TEXT, " +
+                CHECK_OUT_DESCRIPTION + " TEXT " +
                 ");";
-
+        Log.i("table created", "true");
         db.execSQL(checkInTable);
 
     }
 
-    public void insertNewCheckInDetails(EmployeeCheckInModel employee) {
+    public void insertCheckInDetails(EmployeeCheckInModel employee) {
         SQLiteDatabase db = getWritableDatabase();
-
         ContentValues contentValues = new ContentValues();
-        contentValues.put(CHECK_IN_TIME, employee.getCheck_in_time());
-        contentValues.put(CHECK_IN_LOCATION, employee.getLocation());
-        contentValues.put(CHECK_IN_LOCATION_DETAILS, employee.getLoc_details());
-        contentValues.put(CHECK_IN_DESCRIPTION, employee.getDescription());
+        contentValues.put(CHECK_IN_TIME, employee.getIn_time());
+        contentValues.put(CHECK_IN_LOCATION, employee.getIn_location());
+        contentValues.put(CHECK_IN_LOCATION_DETAILS, employee.getIn_loc_details());
+        contentValues.put(CHECK_IN_DESCRIPTION, employee.getIn_description());
+        Log.i("message", "" + contentValues);
+        db.insert(TABLE_NAME, null, contentValues);
+    }
 
-        db.insert(CHECK_IN_TABLE_NAME, null, contentValues);
+    public void insertCheckOutDetails(EmployeeCheckInModel employee) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(CHECK_OUT_TIME, employee.getOut_time());
+        contentValues.put(CHECK_OUT_LOCATION, employee.getOut_location());
+        contentValues.put(CHECK_OUT_LOCATION_DETAILS, employee.getOut_loc_details());
+        contentValues.put(CHECK_OUT_DESCRIPTION, employee.getOut_description());
+
+        db.insert(TABLE_NAME, null, contentValues);
     }
 
     public EmployeeCheckInModel getCheckInDetails() {
@@ -58,15 +80,33 @@ public class EmployeeDatabaseHelper extends SQLiteOpenHelper {
 
         EmployeeCheckInModel employee = new EmployeeCheckInModel();
 
-        String sql = "SELECT * FROM " + CHECK_IN_TABLE_NAME;
+        String sql = "SELECT * FROM " + TABLE_NAME;
 
         Cursor cursor = db.rawQuery(sql, null);
 
         while (cursor.moveToNext()) {
-            employee.setCheck_in_time(cursor.getString(cursor.getColumnIndex(CHECK_IN_TIME)));
-            employee.setLocation(cursor.getString(cursor.getColumnIndex(CHECK_IN_LOCATION)));
-            employee.setLoc_details(cursor.getString(cursor.getColumnIndex(CHECK_IN_LOCATION_DETAILS)));
-            employee.setDescription(cursor.getString(cursor.getColumnIndex(CHECK_IN_DESCRIPTION)));
+            employee.setIn_time(cursor.getString(cursor.getColumnIndex(CHECK_IN_TIME)));
+            employee.setIn_location(cursor.getString(cursor.getColumnIndex(CHECK_IN_LOCATION)));
+            employee.setIn_loc_details(cursor.getString(cursor.getColumnIndex(CHECK_IN_LOCATION_DETAILS)));
+            employee.setIn_description(cursor.getString(cursor.getColumnIndex(CHECK_IN_DESCRIPTION)));
+        }
+        cursor.close();
+
+        return employee;
+    }
+
+    public EmployeeCheckInModel getCheckOutDetails() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        EmployeeCheckInModel employee = new EmployeeCheckInModel();
+
+        String sql = "Select * from " + TABLE_NAME;
+        Cursor cursor = db.rawQuery(sql, null);
+        while (cursor.moveToNext()) {
+            employee.setOut_time(cursor.getString(cursor.getColumnIndex(CHECK_OUT_TIME)));
+            employee.setOut_location(cursor.getString(cursor.getColumnIndex(CHECK_OUT_LOCATION)));
+            employee.setOut_loc_details(cursor.getString(cursor.getColumnIndex(CHECK_OUT_LOCATION_DETAILS)));
+            employee.setOut_description(cursor.getString(cursor.getColumnIndex(CHECK_OUT_DESCRIPTION)));
         }
 
         cursor.close();
@@ -74,16 +114,9 @@ public class EmployeeDatabaseHelper extends SQLiteOpenHelper {
         return employee;
     }
 
-    public void deleteCheckInDetails() {
-        SQLiteDatabase db = getWritableDatabase();
-
-        String deleteQuery = "DELETE FROM " + CHECK_IN_TABLE_NAME + ";";
-
-        db.execSQL(deleteQuery);
-    }
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        String sqlDelete = "DROP TABLE IF EXISTS " + TABLE_NAME;
+        db.execSQL(sqlDelete);
     }
 }
