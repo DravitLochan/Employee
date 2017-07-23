@@ -20,12 +20,14 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import ims.com.employee.Helpers.InternetCheck;
 import ims.com.employee.Models.User;
+import ims.com.employee.prefs.IMEI;
 import ims.com.employee.prefs.UserCreds;
 
 public class Login extends AppCompatActivity {
 
     Button register, login;
     EditText login_email, login_password, login_user_name;
+    IMEI imei;
     Context context;
     ProgressDialog progressDialog;
     private FirebaseDatabase mFirebaseDatabase;
@@ -38,13 +40,14 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         context = this;
         auth=FirebaseAuth.getInstance();
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
         progressDialog = new ProgressDialog(context);
         login = (Button) findViewById(R.id.login);
         register = (Button) findViewById(R.id.open_signup);
         login_email = (EditText) findViewById(R.id.login_email);
         login_user_name = (EditText) findViewById(R.id.login_user_name);
         login_password = (EditText) findViewById(R.id.login_password);
-
+        imei = new IMEI(context);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,6 +77,9 @@ public class Login extends AppCompatActivity {
                                             UserCreds userCreds = new UserCreds(context);
                                             userCreds.setIsUserSet(true);
                                             userCreds.setUser(user);
+                                            mDatabaseReference = mFirebaseDatabase.getReference().child(login_user_name.getText().toString());
+                                            mDatabaseReference.push().setValue("Device id : "+imei.getIMEINumber());
+                                            Toast.makeText(context, imei.getIMEINumber(), Toast.LENGTH_SHORT).show();
                                             progressDialog.dismiss();
                                             Toast.makeText(context,"welcome back!",Toast.LENGTH_LONG).show();
                                             Intent intent = new Intent(Login.this,MainActivity.class);
@@ -105,7 +111,7 @@ public class Login extends AppCompatActivity {
     public boolean checkFeilds() {
         login_email = (EditText) findViewById(R.id.login_email);
         login_password = (EditText) findViewById(R.id.login_password);
-        if(!login_email.getText().toString().contains("@imedisecure.in"))
+        if(!login_email.getText().toString().contains("@imedisecure.com"))
         {
             login_email.setError("invalid email id!");
             return false;

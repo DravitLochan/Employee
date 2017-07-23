@@ -53,7 +53,7 @@ public class EmployeeDatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insertCheckInDetails(EmployeeCheckInModel employee) {
+    public int insertCheckInDetails(EmployeeCheckInModel employee) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(CHECK_IN_TIME, employee.getIn_time());
@@ -62,25 +62,28 @@ public class EmployeeDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(CHECK_IN_DESCRIPTION, employee.getIn_description());
         Log.i("message", "" + contentValues);
         db.insert(TABLE_NAME, null, contentValues);
+        Cursor cursor = db.rawQuery("SELECT MAX(id) FROM "+ TABLE_NAME, null);
+        return 1;
     }
 
-    public void insertCheckOutDetails(EmployeeCheckInModel employee) {
+    public void updateToCompleteEntry(int id, EmployeeCheckInModel employee) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(CHECK_OUT_TIME, employee.getOut_time());
+        //contentValues.put(CHECK_OUT_TIME, employee.getOut_time());
         contentValues.put(CHECK_OUT_LOCATION, employee.getOut_location());
         contentValues.put(CHECK_OUT_LOCATION_DETAILS, employee.getOut_loc_details());
         contentValues.put(CHECK_OUT_DESCRIPTION, employee.getOut_description());
-
+        db.update(TABLE_NAME, contentValues, ID+" = ?", new String[]{id+""});
+        Log.i("checkout dedtails added","successfully");
         db.insert(TABLE_NAME, null, contentValues);
     }
 
-    public EmployeeCheckInModel getCheckInDetails() {
+    public EmployeeCheckInModel getCheckInDetails(int id) {
         SQLiteDatabase db = getReadableDatabase();
 
         EmployeeCheckInModel employee = new EmployeeCheckInModel();
 
-        String sql = "SELECT * FROM " + TABLE_NAME;
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE id = "+ ID;
 
         Cursor cursor = db.rawQuery(sql, null);
 

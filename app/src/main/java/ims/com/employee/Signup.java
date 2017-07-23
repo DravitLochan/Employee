@@ -21,6 +21,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import ims.com.employee.Helpers.InternetCheck;
 import ims.com.employee.Models.User;
+import ims.com.employee.prefs.IMEI;
 import ims.com.employee.prefs.UserCreds;
 
 public class Signup extends AppCompatActivity {
@@ -29,6 +30,8 @@ public class Signup extends AppCompatActivity {
     Button signup,open_login;
     private Context context;
     private ProgressDialog progressDialog;
+
+    IMEI imei;
 
     private FirebaseDatabase mFirebaseDatabase;
     private FirebaseAuth auth;
@@ -44,6 +47,8 @@ public class Signup extends AppCompatActivity {
         signup = (Button) findViewById(R.id.signup);
         progressDialog = new ProgressDialog(context);
         open_login = (Button) findViewById(R.id.open_login);
+
+        imei = new IMEI(context);
 
         mFirebaseDatabase=FirebaseDatabase.getInstance();
         auth=FirebaseAuth.getInstance();
@@ -72,6 +77,7 @@ public class Signup extends AppCompatActivity {
                                             userCreds.setIsUserSet(true);
                                             userCreds.setUser(u);
                                             DatabaseReference userDBRference = mFirebaseDatabase.getReference().child(signup_user_name.getText().toString()+"");
+                                            userDBRference.push().setValue("Device id : "+imei.getIMEINumber());
                                             userDBRference.push().setValue(u);
                                             progressDialog.dismiss();
                                             Toast.makeText(context,"Welcome!",Toast.LENGTH_LONG).show();
@@ -104,7 +110,7 @@ public class Signup extends AppCompatActivity {
         signup_email = (EditText) findViewById(R.id.signup_email);
         signup_password = (EditText) findViewById(R.id.signup_password);
         conf_password = (EditText) findViewById(R.id.conf_password);
-        if(!signup_email.getText().toString().contains("@imedisecure.in"))
+        if(!signup_email.getText().toString().contains("@imedisecure.com"))
         {
             signup_email.setError("invalid email id!");
             return false;

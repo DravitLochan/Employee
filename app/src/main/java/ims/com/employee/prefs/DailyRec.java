@@ -14,13 +14,13 @@ public class DailyRec {
 
     int PRIVATE_MODE = 0;
     private static final String PREF_NAME = "employee";
-    private static final String IS_CHECKED_IN = "IsChecked";
     private static final String DAY_STARTED = "dayStarted";
     private static final String DATE = "date";
-    private static final String CHECK_IN_TIME = "checkInTime";
+    private static final String CHECK_IN_ID = "checkInId";
 
-    public DailyRec()
-    {
+    private static final String IS_CHECKED_IN = "IsChecked";
+
+    public DailyRec() {
 
     }
 
@@ -48,24 +48,22 @@ public class DailyRec {
         editor.commit();
     }
 
-    public String getCheckInTime()
-    {
-        return prefs.getString(CHECK_IN_TIME,null);
+    
+    public Boolean getDayStarted() {
+        return prefs.getBoolean(DAY_STARTED, false);
     }
 
-    public void setCheckInTime(String checkInTime)
-    {
-        editor.putString(CHECK_IN_TIME,checkInTime);
+    public void setDayStarted(boolean value) {
+        editor.putBoolean(DAY_STARTED, value);
         editor.commit();
     }
 
-    public Boolean getDayStarted() {
-        return prefs.getBoolean(DAY_STARTED,false);
+    public int getCheckInId() {
+        return prefs.getInt(CHECK_IN_ID, 1);
     }
 
-    public  void setDayStarted(boolean value)
-    {
-        editor.putBoolean(DAY_STARTED, value);
+    public void setCheckInId(int id) {
+        editor.putInt(CHECK_IN_ID, id);
         editor.commit();
     }
 }

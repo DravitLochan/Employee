@@ -32,15 +32,15 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="4dp"
-        android:maxLength="40"
-        android:textColor="#000000" />
+        android:textColor="#000000"
+        android:scrollHorizontally="false"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="6dp"
         android:padding="4dp"
         android:text="Description:"
         android:textColor="#000000"
@@ -63,7 +63,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="16dp"
         android:text="SUBMIT" />
 
 </LinearLayout>
